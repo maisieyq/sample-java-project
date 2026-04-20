@@ -58,11 +58,8 @@ jobs:
     needs: [build, test]
 
     steps:
-      - name: Download Build Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifacts
-          path: target
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - name: Run Deployment
-        run: java -jar target/*.jar
+    - name: Build Docker image
+      run: docker build -t sample-java-app .
