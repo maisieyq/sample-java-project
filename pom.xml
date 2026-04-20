@@ -1,35 +1,79 @@
-<project>
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>@groupId@</groupId>
-  <artifactId>@artifactId@</artifactId>
-  <version>@version@</version>
-  <packaging>jar</packaging>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-  <name>@ant.project.name@</name>
-  <description>@description@</description>
-  <url>@project.url@</url>
+    <modelVersion>4.0.0</modelVersion>
 
-  <licenses>
-    <license>
-      <name>The Unlicense</name>
-      <url>http://unlicense.org/UNLICENSE</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
+    <groupId>com.maisieyq</groupId>
+    <artifactId>sample-java-project</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
 
-  <scm>
-    <connection>
-      scm:git:@project.repo.url@
-    </connection>
-    <url>@project.scm.url@</url>
-  </scm>
+    <name>Sample Java Project</name>
+    <description>A demo Java project using CI with Docker</description>
 
-  <developers>
-    <developer>
-      <name>Christopher Wellons</name>
-      <email>mosquitopsu@gmail.com</email>
-      <url>http://nullprogram.com</url>
-      <timezone>-5</timezone>
-    </developer>
-  </developers>
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.beust</groupId>
+            <artifactId>jcommander</artifactId>
+            <version>1.82</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.32</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <sourceDirectory>src</sourceDirectory>
+        <testSourceDirectory>test</testSourceDirectory>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>sample.java.project.SampleJavaProject</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
