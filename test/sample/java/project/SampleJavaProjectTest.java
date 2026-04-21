@@ -1,7 +1,7 @@
 package sample.java.project;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,10 +33,35 @@ public class SampleJavaProjectTest {
     }
 
     /**
-     * Tests that the null check in the setter.
+     * Tests that null input is rejected.
      */
-    @Test(expected=NullPointerException.class)
+    @Test(expected = NullPointerException.class)
     public final void nullTest() {
         sjp.setName(null);
+    }
+
+    /**
+     * Tests that blank input is rejected.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public final void emptyNameTest() {
+        sjp.setName("   ");
+    }
+
+    /**
+     * Tests that invalid characters are rejected.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public final void invalidNameTest() {
+        sjp.setName("jing123");
+    }
+
+    /**
+     * Tests trimming behaviour.
+     */
+    @Test
+    public final void trimNameTest() {
+        sjp.setName("  Jing Yin  ");
+        assertEquals("Jing Yin", sjp.getName());
     }
 }

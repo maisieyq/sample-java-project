@@ -6,8 +6,6 @@ import com.beust.jcommander.ParameterException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.Setter;
 
 /**
  * The main class of the application. It contains the main() method,
@@ -21,9 +19,7 @@ public class SampleJavaProject implements Runnable {
     private static final long PRINT_DELAY = 1000L;
 
     /** The name to be printed in the output message. */
-    @Getter @Setter @NonNull
-    @Parameter(names = "--name", description = "set the user's name",
-               required = true)
+    @Parameter(names = "--name", description = "set the user's name", required = true)
     private String name = "world";
 
     /** Command line parameter for --loop. */
@@ -35,20 +31,68 @@ public class SampleJavaProject implements Runnable {
     private boolean help = false;
 
     /**
-     * Print the "Hello, world!" string.
+     * Getter for name.
+     * @return validated name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Setter for name with validation.
+     * @param name input name
+     */
+    public void setName(final String name) {
+        validateName(name);
+        this.name = name.trim();
+    }
+
+    /**
+     * Validate the input name.
+     * Rules:
+     * 1. cannot be null
+     * 2. cannot be empty / blank
+     * 3. only letters and spaces are allowed
+     *
+     * @param input input name
+     */
+    private void validateName(final String input) {
+        if (input == null) {
+            throw new NullPointerException("Name cannot be null");
+        }
+
+        if (input.trim().isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be empty");
+        }
+
+        if (!input.trim().matches("[A-Za-z ]+")) {
+            throw new IllegalArgumentException(
+                "Name can only contain letters and spaces"
+            );
+        }
+    }
+
+    /**
+     * Print the output string.
      * @param args application input arguments
      */
     public static void main(final String[] args) {
+
         /* Parse command line arguments. */
         SampleJavaProject sjp = new SampleJavaProject();
+
         try {
             JCommander jc = new JCommander(sjp, args);
+
+            // validate CLI input after JCommander injects the value
+            sjp.setName(sjp.name);
+
             if (sjp.help) {
                 jc.usage();
                 return;
             }
-        } catch (ParameterException e) {
-            System.err.println("error: " + e.getMessage());
+        } catch (ParameterException | IllegalArgumentException | NullPointerException e) {
+            System.err.println(("error: " + e.getMessage()).toUpperCase());
             new JCommander(new SampleJavaProject()).usage();
             System.exit(-1);
         }
@@ -57,10 +101,14 @@ public class SampleJavaProject implements Runnable {
     }
 
     /**
-     * Print the "Hello, world!" string.
+     * Print the greeting string in uppercase.
      */
     public final void sayHello() {
-        System.out.printf("Hello, %s!%n", name);
+        String message = String.format(
+            "Hello, %s! Welcome to our project!",
+            name
+        );
+        System.out.println(message.toUpperCase());
     }
 
     @Override
