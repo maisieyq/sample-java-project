@@ -51,6 +51,23 @@ public class SampleJavaProject implements Runnable {
     }
 
     /**
+     * Getter for times.
+     * @return number of times to print
+     */
+    public int getTimes() {
+        return times;
+    }
+
+    /**
+     * Setter for times with validation.
+     * @param times number of times to print
+     */
+    public void setTimes(final int times) {
+        validateTimes(times);
+        this.times = times;
+    }
+
+    /**
      * Validate the input name.
      * Rules:
      * 1. cannot be null
@@ -99,7 +116,7 @@ public class SampleJavaProject implements Runnable {
             JCommander jc = new JCommander(sjp, args);
 
             sjp.setName(sjp.name);
-            sjp.validateTimes(sjp.times);
+            sjp.setTimes(sjp.times);
 
             if (sjp.help) {
                 jc.usage();
@@ -119,13 +136,22 @@ public class SampleJavaProject implements Runnable {
     }
 
     /**
-     * Print greeting in uppercase based on times value.
+     * Builds the greeting message in uppercase.
+     *
+     * @return formatted uppercase greeting message
      */
-    public final void sayHello() {
-        String message = String.format(
+    public final String buildGreetingMessage() {
+        return String.format(
             "Hello, %s! Welcome to our project!",
             name
         ).toUpperCase();
+    }
+
+    /**
+     * Print greeting in uppercase based on times value.
+     */
+    public final void sayHello() {
+        String message = buildGreetingMessage();
 
         for (int i = 0; i < times; i++) {
             System.out.println(message);
