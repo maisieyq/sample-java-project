@@ -4,7 +4,6 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
@@ -26,6 +25,10 @@ public class SampleJavaProject implements Runnable {
     @Parameter(names = "--loop", description = "print endlessly, hotswap demo")
     private boolean loop = false;
 
+    /** Command line parameter for --times. */
+    @Parameter(names = "--times", description = "number of times to print")
+    private int times = 1;
+
     /** Command line parameter for --help. */
     @Parameter(names = { "-h", "--help" }, description = "print help message")
     private boolean help = false;
@@ -45,6 +48,23 @@ public class SampleJavaProject implements Runnable {
     public void setName(final String name) {
         validateName(name);
         this.name = name.trim();
+    }
+
+    /**
+     * Getter for times.
+     * @return number of times to print
+     */
+    public int getTimes() {
+        return times;
+    }
+
+    /**
+     * Setter for times with validation.
+     * @param times number of times to print
+     */
+    public void setTimes(final int times) {
+        validateTimes(times);
+        this.times = times;
     }
 
     /**
@@ -73,25 +93,40 @@ public class SampleJavaProject implements Runnable {
     }
 
     /**
+     * Validate times input.
+     * @param input number of times
+     */
+    private void validateTimes(final int input) {
+        if (input < 1 || input > 10) {
+            throw new IllegalArgumentException(
+                "Times must be between 1 and 10"
+            );
+        }
+    }
+
+    /**
      * Print the output string.
      * @param args application input arguments
      */
     public static void main(final String[] args) {
 
-        /* Parse command line arguments. */
         SampleJavaProject sjp = new SampleJavaProject();
 
         try {
             JCommander jc = new JCommander(sjp, args);
 
-            // validate CLI input after JCommander injects the value
             sjp.setName(sjp.name);
+            sjp.setTimes(sjp.times);
 
             if (sjp.help) {
                 jc.usage();
                 return;
             }
-        } catch (ParameterException | IllegalArgumentException | NullPointerException e) {
+
+        } catch (ParameterException
+                | IllegalArgumentException
+                | NullPointerException e) {
+
             System.err.println(("error: " + e.getMessage()).toUpperCase());
             new JCommander(new SampleJavaProject()).usage();
             System.exit(-1);
@@ -101,14 +136,26 @@ public class SampleJavaProject implements Runnable {
     }
 
     /**
-     * Print the greeting string in uppercase.
+     * Builds the greeting message in uppercase.
+     *
+     * @return formatted uppercase greeting message
      */
-    public final void sayHello() {
-        String message = String.format(
+    public final String buildGreetingMessage() {
+        return String.format(
             "Hello, %s! Welcome to our project!",
             name
-        );
-        System.out.println(message.toUpperCase());
+        ).toUpperCase();
+    }
+
+    /**
+     * Print greeting in uppercase based on times value.
+     */
+    public final void sayHello() {
+        String message = buildGreetingMessage();
+
+        for (int i = 0; i < times; i++) {
+            System.out.println(message);
+        }
     }
 
     @Override
